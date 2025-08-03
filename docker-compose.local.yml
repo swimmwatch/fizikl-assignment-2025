@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  db:
+    ports:
+      - "${POSTGRES_PUBLIC_PORT}:5432"
+
+  redis:
+    ports:
+      - "${REDIS_PUBLIC_PORT}:6379"
+
+  app:
+    ports:
+      - "${APP_PUBLIC_PORT}:${APP_PORT}"

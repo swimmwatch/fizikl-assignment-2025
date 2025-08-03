@@ -1,0 +1,64 @@
+[tool.poetry]
+name = "fizikl-assignment-2025"
+version = "1.0.0"
+description = "Fizikl Assignment 2025 - A Django REST API assignment."
+authors = ["Dmitry Vasiliev <contact.vasiliev.dmitry@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.13"
+django = "^5.2.4"
+djangorestframework = "^3.16.0"
+djangorestframework-simplejwt = "^5.3.1"
+celery = "^5.5.3"
+redis = "^5.3.1"
+drf-yasg = "^1.21.7"
+gunicorn = "^23.0.0"
+django-environ = "^0.12.0"
+psycopg = { extras = ["binary", "pool"], version = "^3.2.7" }
+django-structlog = "^9.1.1"
+structlog = "^25.4.0"
+django-celery-beat = "^2.8.1"
+django-health-check = "^3.18.3"
+django-cleanup = "^9.0.0"
+django-csp = "^4.0"
+django-cors-headers = "^4.7.0"
+drf-spectacular = "^0.28.0"
+drf-spectacular-sidecar = "^2025.8.1"
+django-filter = "^25.1"
+
+[tool.poetry.group.dev.dependencies]
+faker = "^24.1.0"
+freezegun = "^1.5.2"
+isort = "^6.0.1"
+pytest-django = "^4.11.1"
+pytest-mock = "^3.14.1"
+pytest = "^8.4.1"
+pytest-xdist = "^3.8.0"
+pytest-rerunfailures = "^15.1"
+pytest-factoryboy = "^2.8.1"
+flake8 = "^7.3.0"
+black = "^25.1.0"
+flake8-quotes = "^3.4.0"
+flake8-isort = "^6.1.2"
+setuptools = "^78.1.0"
+flake8-pytest-style = "^2.1.0"
+flake8-bandit = "^4.1.1"
+pep8-naming = "^0.15.1"
+flake8-string-format = "^0.3.0"
+flake8-bugbear = "^24.12.12"
+flake8-pyproject = "^1.2.3"
+types-pytz = "^2025.2.0.20250516"
+types-redis = "^4.6.0.20241004"
+locust = "^2.36.2"
+pytest-cov = "^6.2.1"
+flake8-print = "^5.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+force_single_line = true

@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  app:
+    image: "${IMAGE_APP}"
+    restart: always
+    env_file: .env
+    build:
+      context: src
+      args:
+        PYTHON_VERSION: $PYTHON_VERSION
+        POETRY_VERSION: $POETRY_VERSION
+    command: >
+      gunicorn --workers ${APP_WORKERS}
+        --bind :${APP_PORT}
+        --worker-tmp-dir ${APP_WORKER_TMP_DIR:-/dev/shm}
+        --timeout ${APP_TIMEOUT:-60}
+        --graceful-timeout ${APP_GRACEFUL_TIMEOUT:-30}
+        --keep-alive ${APP_KEEP_ALIVE:-5}
+        --access-logfile -
+        --error-logfile -
+        ${APP_PROJECT}.wsgi:application
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "--fail",
+          "http://0.0.0.0:${APP_PORT}/api/healthcheck/?format=json",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  redis:
+    image: "redis:7.4.3-alpine"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 30s
+      retries: 50
+      start_period: 30s
+    volumes:
+      - redis_volume:/data
+
+  worker:
+    image: "${IMAGE_APP}"
+    env_file: .env
+    restart: unless-stopped
+    build:
+      context: src
+      args:
+        PYTHON_VERSION: $PYTHON_VERSION
+        POETRY_VERSION: $POETRY_VERSION
+    command: celery --app ${APP_PROJECT} worker --loglevel INFO --concurrency=${WORKER_CONCURRENCY}
+    healthcheck:
+      test: celery --app ${APP_PROJECT} status
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    ulimits:
+      nofile:
+        soft: 4096
+        hard: 4096
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+
+  db:
+    image: "postgres:16-alpine"
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - db_volume:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_volume:
+  nginx_log_volume:
+  redis_volume:
