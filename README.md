@@ -39,6 +39,7 @@ cd fizikl-assignment-2025
 2. Запустить проект:
 
 ```bash
+сp .env.example .env
 make build run collectstatic
 ```
 
